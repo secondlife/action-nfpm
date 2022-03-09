@@ -1,0 +1,12 @@
+# See https://nfpm.goreleaser.com/configuration for more information
+name: nfpm-example
+arch: all
+platform: linux
+version: ${VERSION}
+section: devel
+priority: extra
+maintainer: Platform Engineering <platform@lindenlab.com>
+description: |
+  Example debian/linux package using nFPM.
+homepage: https://github.com/secondlife/debian-template
+license: Proprietary

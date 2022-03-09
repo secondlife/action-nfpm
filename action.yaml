@@ -1,0 +1,69 @@
+name: Build packages
+description: Build linux packages using nFPM
+inputs:
+  packager:
+    description: Target package types, deb, rpm, etc.
+    required: false
+    default: deb
+    type: string
+  config:
+    description: Path to nFPM config file
+    type: string
+  target:
+    description: Where to save generated package
+    type: string
+  fallback-version:
+    description: Version to fall back to if no tag can be found
+    type: string
+  checkout:
+    description: Whether to perform action/checkout
+    type: boolean
+    default: true
+  setup-nfpm:
+    description: Whether to set up nfpm
+    type: boolean
+    default: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v2
+      if: inputs.checkout
+      with:
+        fetch-depth: 0 # Required for github-action-get-previous-tag
+
+    - uses: secondlife/setup-nfpm@v1
+      if: inputs.setup-nfpm
+
+    - uses: secondlife-3p/github-action-get-previous-tag@v1
+      id: previous-tag
+      with:
+        fallback: ${{ inputs.fallback-version }}
+
+    - name: Determine next version
+      id: version
+      shell: bash
+      env:
+        PREV: ${{ steps.previous-tag.outputs.tag }}
+      run: |
+        if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+          echo "::set-output name=value::${GITHUB_REF#refs/tags/v}"
+        else
+          echo "::set-output name=value::${PREV#v}~$(git rev-parse --short HEAD)"
+        fi
+
+    - name: Build deb
+      shell: bash
+      env:
+        VERSION: ${{ steps.version.outputs.value }}
+        TARGET: ${{ inputs.target }}
+        CONFIG: ${{ inputs.config }}
+        PACKAGER: ${{ inputs.packager }}
+      run: |
+        if [[ ! -z "$TARGET" ]]; then
+          mkdir -p "$TARGET"
+        fi
+        nfpm package \
+          ${CONFIG:+--config "$CONFIG"} \
+          ${TARGET:+--target "$TARGET"} \
+          --packager $PACKAGER

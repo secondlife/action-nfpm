@@ -1,0 +1,59 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: [v*]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Test default
+        uses: ./
+        with:
+          checkout: false
+
+      - shell: bash
+        run: |
+          if ! ls nfpm-example*.deb >/dev/null 2>&1; then
+            echo "Failed to create deb with default arguments" >&2
+            exit 1
+          fi
+          rm nfpm-example*.deb
+
+      - name: Test deb
+        uses: ./
+        with:
+          checkout: false
+          setup-nfpm: false
+          packager: deb
+
+      - shell: bash
+        run: |
+          if ! ls nfpm-example*.deb >/dev/null 2>&1; then
+            echo "Failed to create deb when given explicit packager" >&2
+            exit 1
+          fi
+          rm nfpm-example*.deb
+
+      - name: Test rpm
+        uses: ./
+        with:
+          checkout: false
+          setup-nfpm: false
+          packager: rpm
+
+      - shell: bash
+        run: |
+          if ! ls nfpm-example*.rpm >/dev/null 2>&1; then
+            echo "Failed to create rpm when given explicit packager" >&2
+            exit 1
+          fi
+          rm nfpm-example*.rpm
