@@ -22,11 +22,11 @@ jobs:
 
       - shell: bash
         run: |
-          if ! ls nfpm-example*.deb >/dev/null 2>&1; then
+          if ! ls dist/nfpm-example*.deb >/dev/null 2>&1; then
             echo "Failed to create deb with default arguments" >&2
             exit 1
           fi
-          rm nfpm-example*.deb
+          rm dist/nfpm-example*.deb
 
       - name: Test deb
         uses: ./
@@ -37,11 +37,11 @@ jobs:
 
       - shell: bash
         run: |
-          if ! ls nfpm-example*.deb >/dev/null 2>&1; then
+          if ! ls dist/nfpm-example*.deb >/dev/null 2>&1; then
             echo "Failed to create deb when given explicit packager" >&2
             exit 1
           fi
-          rm nfpm-example*.deb
+          rm dist/nfpm-example*.deb
 
       - name: Test rpm
         uses: ./
@@ -52,8 +52,8 @@ jobs:
 
       - shell: bash
         run: |
-          if ! ls nfpm-example*.rpm >/dev/null 2>&1; then
+          if ! ls dist/nfpm-example*.rpm >/dev/null 2>&1; then
             echo "Failed to create rpm when given explicit packager" >&2
             exit 1
           fi
-          rm nfpm-example*.rpm
+          rm dist/nfpm-example*.rpm

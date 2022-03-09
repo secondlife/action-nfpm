@@ -12,6 +12,7 @@ inputs:
   target:
     description: Where to save generated package
     type: string
+    default: dist
   fallback-version:
     description: Version to fall back to if no tag can be found
     type: string
