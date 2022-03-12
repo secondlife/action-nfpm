@@ -18,23 +18,21 @@ inputs:
     type: string
   checkout:
     description: Whether to perform action/checkout
-    type: boolean
     default: true
   setup-nfpm:
     description: Whether to set up nfpm
-    type: boolean
     default: true
 
 runs:
   using: composite
   steps:
     - uses: actions/checkout@v2
-      if: inputs.checkout
+      if: ${{ fromJSON(inputs.checkout) }}
       with:
         fetch-depth: 0 # Required for github-action-get-previous-tag
 
     - uses: secondlife/setup-nfpm@v1
-      if: inputs.setup-nfpm
+      if: ${{ fromJSON(inputs.setup-nfpm) }}
 
     - uses: secondlife-3p/github-action-get-previous-tag@v1
       id: previous-tag
