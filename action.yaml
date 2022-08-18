@@ -48,7 +48,11 @@ runs:
         if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
           echo "::set-output name=value::${GITHUB_REF#refs/tags/v}"
         else
-          echo "::set-output name=value::${PREV#v}~$(git rev-parse --short HEAD)"
+          IFS=. read major minor patch <<< "${PREV}"
+          IFS="~" read patch prerelease <<< "${patch}"
+          (( patch++ ))
+          NEXT="${major}.${minor}.${patch}"
+          echo "::set-output name=value::${NEXT#v}~$(git rev-parse --short HEAD)"
         fi
 
     - name: Build deb
