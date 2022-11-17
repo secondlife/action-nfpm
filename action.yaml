@@ -46,9 +46,9 @@ runs:
         PREV: ${{ steps.previous-tag.outputs.tag }}
       run: |
         if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-          echo "::set-output name=value::${GITHUB_REF#refs/tags/v}"
+          echo "value=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=value::${PREV#v}~$(git rev-parse --short HEAD)"
+          echo "value=${PREV#v}~$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         fi
 
     - name: Build deb
