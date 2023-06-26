@@ -46,10 +46,20 @@ runs:
         PREV: ${{ steps.previous-tag.outputs.tag }}
       run: |
         if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-          echo "value=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          tag_version="${GITHUB_REF#refs/tags/v}"
         else
-          echo "value=${PREV#v}~$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          # Add an abbreviated commit to the version to indicate this is a
+          # "prerelease" of the previous tag... which really it isn't, it's a
+          # prerelease of the next release. If the identified previous tag
+          # already has a prerelease portion (`-` in a semantic version), this
+          # *will* get two prerelease sections, but that's OK.
+          tag_version="${PREV#v}~$(git rev-parse --short HEAD)"
         fi
+        # The git tag is a semantic version, where `-` indicates a prerelease
+        # version. Debian & RPM packages use `~` to indicate prerelease
+        # versions. So translate `-`s into `~`s.
+        tag_version="${tag_version//-/\~}"
+        echo "value=$tag_version" >> $GITHUB_OUTPUT
 
     - name: Build deb
       shell: bash
