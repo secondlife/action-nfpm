@@ -31,7 +31,7 @@ runs:
       with:
         fetch-depth: 0 # Required for github-action-get-previous-tag
 
-    - uses: secondlife/setup-nfpm@v1
+    - uses: secondlife/setup-nfpm@v2
       if: ${{ fromJSON(inputs.setup-nfpm) }}
 
     - uses: secondlife-3p/github-action-get-previous-tag@v1
