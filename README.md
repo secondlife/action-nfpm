@@ -1,7 +1,5 @@
 # action-nfpm
 
-_📘 This action is part of Second Life's [Standard Action Library][sal]._
-
 A helper for building linux packages with [nFPM][] using version information
 from git tags. **Using this action allows you to specify `${VERSION}` in your
 nfpm.yaml and have the last valid git version used.**
