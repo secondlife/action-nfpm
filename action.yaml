@@ -1,4 +1,4 @@
-name: Build packages
+name: Build nFPM packages
 description: Build linux packages using nFPM
 inputs:
   packager:
