@@ -22,6 +22,9 @@ inputs:
   setup-nfpm:
     description: Whether to set up nfpm
     default: true
+  tag-prefix:
+    description: Prefix that identifies a tag as a version tag
+    default: v
 
 runs:
   using: composite
@@ -38,22 +41,24 @@ runs:
       id: previous-tag
       with:
         fallback: ${{ inputs.fallback-version }}
+        prefix: ${{ inputs.tag-prefix }}
 
     - name: Determine next version
       id: version
       shell: bash
       env:
         PREV: ${{ steps.previous-tag.outputs.tag }}
+        TAG_PREFIX: ${{ inputs.tag-prefix }}
       run: |
-        if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-          tag_version="${GITHUB_REF#refs/tags/v}"
+        if [[ "$GITHUB_REF" == refs/tags/"$TAG_PREFIX"* ]]; then
+          tag_version="${GITHUB_REF#refs/tags/"$TAG_PREFIX"}"
         else
           # Add an abbreviated commit to the version to indicate this is a
           # "prerelease" of the previous tag... which really it isn't, it's a
           # prerelease of the next release. If the identified previous tag
           # already has a prerelease portion (`-` in a semantic version), this
           # *will* get two prerelease sections, but that's OK.
-          tag_version="${PREV#v}~$(git rev-parse --short HEAD)"
+          tag_version="${PREV#"$TAG_PREFIX"}~$(git rev-parse --short HEAD)"
         fi
         # The git tag is a semantic version, where `-` indicates a prerelease
         # version. Debian & RPM packages use `~` to indicate prerelease
