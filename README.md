@@ -1,8 +1,8 @@
 # action-nfpm
 
 A helper for building linux packages with [nFPM][] using version information
-from git tags. **Using this action allows you to specify `${VERSION}` in your
-nfpm.yaml and have the last valid git version used.**
+from git tags. Using this action allows you to specify `${VERSION}` in your
+nfpm.yaml and have the last valid git version used.
 
 ## Example
 
@@ -16,10 +16,11 @@ Assuming you have a repository with a **nfpm.yaml** file in its root:
 ```yaml
 jobs:
   build:
-    using: [self-hosted, linux]
+    name: Build
+    runs-on: ubuntu-latest
     steps:
-      - uses: secondlife/action-nfpm@v1
-      - uses: actions/upload-artifact@v2
+      - uses: secondlife/action-nfpm@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
@@ -33,12 +34,13 @@ Alternative distribution archives can be built by specifying a valid nFPM
 ```yaml
 jobs:
   build:
-    using: [self-hosted, linux]
+    name: Build
+    runs-on: ubuntu-latest
     steps:
-      - uses: secondlife/action-nfpm@v1
+      - uses: secondlife/action-nfpm@v2
         with:
           packager: rpm
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
