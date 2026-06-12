@@ -37,7 +37,7 @@ runs:
     - uses: secondlife/setup-nfpm@v5
       if: ${{ fromJSON(inputs.setup-nfpm) }}
 
-    - uses: secondlife-3p/github-action-get-previous-tag@v1
+    - uses: secondlife-3p/github-action-get-previous-tag@v2
       id: previous-tag
       with:
         fallback: ${{ inputs.fallback-version }}
