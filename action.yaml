@@ -32,7 +32,8 @@ runs:
     - uses: actions/checkout@v6
       if: ${{ fromJSON(inputs.checkout) }}
       with:
-        fetch-depth: 0 # Required for github-action-get-previous-tag
+        # Get all the history so we can detect which is the previous tag.
+        fetch-depth: 0
 
     - uses: secondlife/setup-nfpm@v5
       if: ${{ fromJSON(inputs.setup-nfpm) }}
@@ -41,7 +42,7 @@ runs:
       id: previous-tag
       with:
         fallback: ${{ inputs.fallback-version }}
-        prefix: ${{ inputs.tag-prefix }}
+        pattern: "${{ inputs.tag-prefix }}*"
 
     - name: Determine next version
       id: version
