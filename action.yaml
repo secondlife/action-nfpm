@@ -38,11 +38,29 @@ runs:
     - uses: secondlife/setup-nfpm@v5
       if: ${{ fromJSON(inputs.setup-nfpm) }}
 
-    - uses: secondlife-3p/github-action-get-previous-tag@v2
+    - name: Identify most recent previous tag
       id: previous-tag
-      with:
-        fallback: ${{ inputs.fallback-version }}
-        pattern: "${{ inputs.tag-prefix }}*"
+      env:
+        fallback_version: ${{ inputs.fallback-version }}
+        tag_prefix: ${{ inputs.tag-prefix }}
+      run: |
+        set -euxo pipefail
+
+        {
+          echo -n tag=
+          if ! git describe --tags --abbrev=0 --match="${tag_prefix}*" HEAD
+          then
+            if [[ -z "$fallback_version" ]]
+            then
+              echo "Could not find a most recent tag for $GITHUB_REF, and no fallback was given." >&2
+              exit 1
+            fi
+
+            echo "$fallback_version"
+          fi
+        } >> "$GITHUB_OUTPUT"
+
+      shell: bash
 
     - name: Determine next version
       id: version
